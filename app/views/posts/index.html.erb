@@ -1,0 +1,54 @@
+<div class="container mt-4">
+  <h1 class="mb-4 fw-bold text-success">All Posts</h1>
+
+  <div class="mb-4">
+    <%= link_to "New Post", new_post_path, class: "btn btn-success fw-semibold" %>
+  </div>
+
+  <% @posts.each do |post| %>
+    <div class="card  shadow-sm position-relative">
+
+      <div class="card-body">
+
+        <!-- Add this stretched link (hidden, but clickable) -->
+        <%= link_to post_path(post), class: "stretched-link text-decoration-none" do %>
+        <% end %>
+
+        <!-- Post user and time -->
+        <div class="d-flex align-items-center mb-3">
+          <% if post.user.profile_image.attached? %>
+            <%= image_tag post.user.profile_image.variant(resize_to_fill: [30, 30]), class: "rounded-circle me-2", alt: post.user.full_name %>
+          <% end %>
+          <div>
+            <div>
+              <%= link_to post.user.full_name.presence || "Unknown user", user_path(post.user), class: "fw-semibold text-primary text-decoration-none" %>
+            </div>
+            <div class="text-muted small">
+              <%= time_ago_in_words(post.created_at) %> ago
+            </div>
+          </div>
+        </div>
+
+        <!-- Post content -->
+        <p class="card-text"><%= post.content %></p>
+
+        <!-- Post image (if attached) -->
+        <% if post.image.attached? %>
+          <%= image_tag post.image.variant(resize_to_limit: [100, 100]), class: "img-thumbnail mb-2" %>
+        <% end %>
+
+        <!-- Like count and comments -->
+        <div class="interaction-counts mt-2">
+          <span id="like-count-<%= post.id %>">💚 Likes: <%= post.likes.count %></span>
+          <p>💬 Comments: <%= post.comments.count %></p>
+        </div>
+
+      </div> <!-- end card-body -->
+
+      <!-- Like button outside of the link -->
+      <div class="card-footer bg-white border-0">
+        <%= render partial: 'like_button', locals: { post: post } %>
+      </div>
+    </div>
+  <% end %>
+</div>

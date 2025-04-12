@@ -1,0 +1,70 @@
+<div class="container mt-4">
+
+  <div class="card card shadow-sm mb-3">
+    <div class="card-body">
+
+      <h5 class="card-title fs-5"><%= @post.content %></h5>
+      <!-- Author Info -->
+      <div class="d-flex align-items-center mb-3">
+        <% if @post.user.profile_image.attached? %>
+          <%= image_tag @post.user.profile_image.variant(resize_to_fill: [40, 40]), class: "rounded-circle me-2", alt: @post.user.full_name %>
+        <% end %>
+        <div>
+          <div>
+            <%= link_to @post.user.full_name, user_path(@post.user), class: "fw-semibold text-primary text-decoration-none" %>
+          </div>
+          <div class="text-muted small">
+            <%= link_to @post.user.email, user_path(@post.user), class: "text-decoration-none" %>
+          </div>
+        </div>
+      </div>
+
+
+
+      <% if @post.image.attached? %>
+        <%= image_tag @post.image.variant(resize_to_limit: [600, 600]), class: "img-fluid rounded", alt: "" %>
+      <% end %>
+
+      <% if @post.user == current_user %>
+        <%= button_to "Delete Post", post_path(@post), method: :delete, data: { confirm: "Are you sure you want to delete this post?" }, class: "btn btn-danger mb-2" %>
+      <% end %>
+
+      <!-- ✅ Like count -->
+      <div class="interaction-counts">
+        <span id="like-count-<%= @post.id %>">💚 Likes: <%= @post.likes.count %></span><br>
+        <p><p>💬Comments: <%= @post.comments.count %></p>
+      </div>
+
+
+
+      <!-- ✅ Like / Unlike button (partial) -->
+      <%= render partial: 'like_button', locals: { post: @post } %>
+
+    </div>
+  </div>
+
+  <h4 class="fw-bold text-success">Comments</h4>
+
+  <div class="card shadow-sm p-4 mb-4">
+    <%= form_with(model: [@post, Comment.new], local: true) do |form| %>
+      <div class="mb-3">
+        <%= form.text_area :content, class: "form-control", placeholder: "Write a comment..." %>
+      </div>
+      <%= form.submit "Post Comment", class: "btn btn-outline-success" %>
+    <% end %>
+  </div>
+
+  <% @post.comments.each do |comment| %>
+    <div class="card mb-2 p-2">
+      <strong><%= comment.user.email %></strong><br>
+      <%= comment.content %>
+
+      <% if comment.user == current_user %>
+        <%= button_to "Delete Comment", post_comment_path(@post, comment), method: :delete, data: { confirm: "Are you sure you want to delete this comment?" }, class: "btn btn-danger btn-sm mt-2" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= link_to "Back to Posts", posts_path, class: "btn btn-outline-success mt-3 fw-semibold" %>
+
+</div>

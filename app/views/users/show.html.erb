@@ -1,0 +1,27 @@
+<div class="card mb-4">
+  <% if @user.cover_image.attached? %>
+    <%= image_tag @user.cover_image, class: "card-img-top", style: "object-fit: cover; height: 200px;" %>
+  <% end %>
+
+  <div class="card-body text-center">
+    <% if @user.profile_image.attached? %>
+      <%= image_tag @user.profile_image, class: "rounded-circle mb-3", style: "width: 120px; height: 120px; object-fit: cover;" %>
+    <% end %>
+
+    <h3><%= @user.full_name.presence || "No name provided" %></h3>
+    <p class="text-muted"><%= mail_to @user.email %></p>
+    <p><%= @user.bio.presence || "No bio yet." %></p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">Posts by <%= @user.full_name.presence || @user.email %>:</h4>
+    <% @posts.each do |post| %>
+      <div class="mb-3">
+        <strong><%= time_ago_in_words(post.created_at) %> ago:</strong>
+        <p><%= post.content %></p>
+      </div>
+    <% end %>
+  </div>
+</div>
